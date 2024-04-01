@@ -1,0 +1,84 @@
+version: '3'
+services:
+  postgres-airflow:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ${AIRFLOW_DB}
+      POSTGRES_USER: ${AIRFLOW_USER}
+      POSTGRES_PASSWORD: ${AIRFLOW_PASSWORD}
+    volumes:
+      - airflow-postgres-data:/var/lib/postgresql/data
+
+  postgres-rick-morty:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ${RICK_AND_MORTY_DB}
+      POSTGRES_USER: ${RICK_AND_MORTY_USER}
+      POSTGRES_PASSWORD: ${RICK_AND_MORTY_PASSWORD}
+    volumes:
+      - rick-morty-postgres-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - 5050:80
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres-rick-morty
+
+  airflow-webserver:
+    build: .
+    depends_on:
+      - postgres-airflow
+      - postgres-rick-morty
+    environment:
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${AIRFLOW_USER}:${AIRFLOW_PASSWORD}@postgres-airflow/${AIRFLOW_DB}
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__WEBSERVER__AUTH_BACKEND: airflow.contrib.auth.backends.password_auth
+      _AIRFLOW_WWW_USER_USERNAME: ${AIRFLOW_UI_USER}
+      _AIRFLOW_WWW_USER_PASSWORD: ${AIRFLOW_UI_PASSWORD}
+      RICK_AND_MORTY_USER: ${RICK_AND_MORTY_USER}
+      RICK_AND_MORTY_PASSWORD: ${RICK_AND_MORTY_PASSWORD}
+      RICK_AND_MORTY_HOST: ${RICK_AND_MORTY_HOST}
+      RICK_AND_MORTY_PORT: ${RICK_AND_MORTY_PORT}
+      RICK_AND_MORTY_DB: ${RICK_AND_MORTY_DB}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/opt/airflow/scripts
+      - ./logs:/opt/airflow/logs
+      - ./config:/opt/airflow/config
+    ports:
+      - "8080:8080"
+    command: bash -c "airflow db init && airflow users create --username ${AIRFLOW_UI_USER} --password ${AIRFLOW_UI_PASSWORD} --firstname Admin --lastname User --role Admin --email admin@example.com && airflow webserver --port 8080"
+
+  airflow-scheduler:
+    build: .
+    depends_on:
+      - postgres-airflow
+      - postgres-rick-morty
+    environment:
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${AIRFLOW_USER}:${AIRFLOW_PASSWORD}@postgres-airflow/${AIRFLOW_DB}
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      RICK_AND_MORTY_USER: ${RICK_AND_MORTY_USER}
+      RICK_AND_MORTY_PASSWORD: ${RICK_AND_MORTY_PASSWORD}
+      RICK_AND_MORTY_HOST: ${RICK_AND_MORTY_HOST}
+      RICK_AND_MORTY_PORT: ${RICK_AND_MORTY_PORT}
+      RICK_AND_MORTY_DB: ${RICK_AND_MORTY_DB}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/opt/airflow/scripts
+      - ./logs:/opt/airflow/logs
+      - ./config:/opt/airflow/config
+    command: airflow scheduler
+
+volumes:
+  airflow-postgres-data:
+  rick-morty-postgres-data:
+  pgadmin_data: 
