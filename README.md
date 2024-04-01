@@ -58,8 +58,8 @@ To set up the project, follow these steps:
    ```
 
 4. Access the Airflow web UI at `http://localhost:8080` using the following credentials:
-   - Username: admin
-   - Password: admin
+   - Username: `admin`
+   - Password: `admin`
 
 ## Running the ETL Process
 
