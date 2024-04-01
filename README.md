@@ -91,11 +91,11 @@ To check and query the data using pgAdmin4, follow these steps:
    - General tab:
      - Name: Enter a name for the server connection (e.g., "Rick and Morty DB").
    - Connection tab:
-     - Host: Enter the hostname or IP address of your PostgreSQL container (e.g., `postgres-rick-morty`).
+     - Host: Enter the hostname or IP address of your PostgreSQL container (`postgres-rick-morty`).
      - Port: Enter the port number on which the PostgreSQL server is running (default: `5432`).
-     - Maintenance database: Enter the name of the database you want to connect to (e.g., `rick_and_morty`).
-     - Username: Enter the username to authenticate with the PostgreSQL server (e.g., `rick`).
-     - Password: Enter the password for the specified username (e.g., `morty`).
+     - Maintenance database: Enter the name of the database you want to connect to (`rick_and_morty`).
+     - Username: Enter the username to authenticate with the PostgreSQL server (`rick`).
+     - Password: Enter the password for the specified username (`morty`).
    - SSL tab:
      - SSL mode: Select "Prefer" or "Disable" based on your setup. If you are using a local development environment without SSL, you can select "Disable".
 
