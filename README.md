@@ -132,4 +132,4 @@ docker-compose down -v
 
 ## Contributing
 
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request. You can reach out to me at teodorio@protonmail.com or on DM me on Twitter at `@teodor_io`.
+Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request. You can reach out to me at teodorio06@gmail.com or on DM me on Twitter at `@teodor_io`.
